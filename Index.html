@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Parking Garage Dashboard</title>
+    <link rel="stylesheet" href="Style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>🚗 Smart Parking Garage Dashboard 🚗</h1>
+    <button id="mode-toggle" class="mode-toggle">🌙 Dark Mode</button>
+    </header>
+    <main>
+        <!-- Dashboard Cards -->
+        <div class="dashboard">
+            <!-- Parking Status -->
+            <div class="card">
+                <h2>Parking Status</h2>
+                <div class="status">
+                    <div class="parking-spot" id="spot1">Spot 1: Empty</div>
+                    <div class="parking-spot" id="spot2">Spot 2: Empty</div>
+                    <div class="parking-spot" id="spot3">Spot 3: Empty</div>
+                </div>
+            </div>
+
+            <!-- Car Count -->
+            <div class="card">
+                <h2>Car Count</h2>
+                <p>🚙 Cars Entered: <span id="cars-entered">0</span></p>
+                <p>🚗 Cars Exited: <span id="cars-exited">0</span></p>
+            </div>
+
+            <!-- Fire Alert -->
+            <div class="card">
+                <h2>🔥 Fire Alert</h2>
+                <p id="fire-status" class="safe">No Fire Detected</p>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>Smart Parking System © 2024</p>
+    </footer>
+</body>
+</html>
