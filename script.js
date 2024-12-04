@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch data from Raspberry Pi sensors
     async function fetchSensorData() {
         try {
-            const response = await fetch('http://<RaspberryPi_IP>:5000/sensors');
+            const response = await fetch('http://192.168.241.244:5000/sensors');
             const data = await response.json();
 
             // Update parking spots
