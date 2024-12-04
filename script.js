@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const parkingSpots = {
         spot1: { status: "Empty" },
         spot2: { status: "Empty" },
-        spot3: { status: "Empty" },
     };
 
     const fireStatus = document.getElementById("fire-status");
@@ -13,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let enteredCount = 0;
     let exitedCount = 0;
 
+    // Update parking spot status
     function updateParkingSpot(spotId, status) {
         const spotElement = document.getElementById(spotId);
         parkingSpots[spotId].status = status;
@@ -26,31 +26,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function simulateGarage() {
-        const spotKeys = Object.keys(parkingSpots);
-        const randomSpot = spotKeys[Math.floor(Math.random() * spotKeys.length)];
-        const newStatus = parkingSpots[randomSpot].status === "Empty" ? "Occupied" : "Empty";
-        updateParkingSpot(randomSpot, newStatus);
+    // Fetch data from Raspberry Pi sensors
+    async function fetchSensorData() {
+        try {
+            const response = await fetch('http://<RaspberryPi_IP>:5000/sensors');
+            const data = await response.json();
 
-        enteredCount += Math.floor(Math.random() * 2);
-        exitedCount += Math.floor(Math.random() * 2);
+            // Update parking spots
+            updateParkingSpot("spot1", data.parking_1 === "Empty" ? "Empty" : "Occupied");
+            updateParkingSpot("spot2", data.parking_2 === "Empty" ? "Empty" : "Occupied");
 
-        carsEntered.textContent = enteredCount;
-        carsExited.textContent = exitedCount;
+            // Update fire status
+            if (data.fire_alert) {
+                fireStatus.textContent = "🔥 Fire Detected!";
+                fireStatus.classList.add("danger");
+                fireStatus.classList.remove("safe");
+                alert("⚠ FIRE ALERT: Evacuate the Garage!");
+            } else {
+                fireStatus.textContent = "No Fire Detected";
+                fireStatus.classList.add("safe");
+                fireStatus.classList.remove("danger");
+            }
 
-        if (Math.random() < 0.1) {
-            fireStatus.textContent = "🔥 Fire Detected!";
-            fireStatus.classList.remove("safe");
-            fireStatus.classList.add("danger");
-            alert("⚠️ FIRE ALERT: Evacuate the Garage!");
-        } else {
-            fireStatus.textContent = "No Fire Detected";
-            fireStatus.classList.remove("danger");
-            fireStatus.classList.add("safe");
+            // Update car entry/exit counts
+            enteredCount = data.cars_entered;
+            exitedCount = data.cars_exited;
+
+            carsEntered.textContent = enteredCount;
+            carsExited.textContent = exitedCount;
+
+        } catch (error) {
+            console.error("Error fetching sensor data:", error);
         }
     }
 
-    // Toggle Dark and Light Mode
+    // Toggle dark and light modes
     modeToggle.addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
         document.querySelector("header").classList.toggle("dark-mode");
@@ -60,11 +70,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Update button text
         if (document.body.classList.contains("dark-mode")) {
-            modeToggle.textContent = "☀️ Light Mode";
+            modeToggle.textContent = "☀ Light Mode";
         } else {
             modeToggle.textContent = "🌙 Dark Mode";
         }
     });
 
-    setInterval(simulateGarage, 3000);
+    // Call fetchSensorData every 3 seconds
+    setInterval(fetchSensorData, 3000);
 });
