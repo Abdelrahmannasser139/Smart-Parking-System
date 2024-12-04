@@ -10,7 +10,13 @@
 <body>
     <header>
         <h1>🚗 Smart Parking Garage Dashboard 🚗</h1>
-    <button id="mode-toggle" class="mode-toggle">🌙 Dark Mode</button>
+        <div class="notification-container">
+            <button id="mode-toggle" class="mode-toggle">🌙 Dark Mode</button>
+            <div id="notification-bell" class="notification-bell">
+                <span class="bell-icon">🔔</span>
+                <span id="notification-count" class="notification-badge">0</span>
+            </div>
+        </div>
     </header>
     <main>
         <!-- Dashboard Cards -->
