@@ -26,39 +26,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Fetch data from Raspberry Pi sensors
-    async function fetchSensorData() {
-        try {
-            const response = await fetch('http://192.168.241.244:5000/sensors');
-            const data = await response.json();
+    // Setup MQTT connection
+    const client = mqtt.connect("ws://localhost:9001");  // Use your Raspberry Pi IP and WebSocket port
 
-            // Update parking spots
-            updateParkingSpot("spot1", data.parking_1 === "Empty" ? "Empty" : "Occupied");
-            updateParkingSpot("spot2", data.parking_2 === "Empty" ? "Empty" : "Occupied");
-
-            // Update fire status
-            if (data.fire_alert) {
-                fireStatus.textContent = "🔥 Fire Detected!";
-                fireStatus.classList.add("danger");
-                fireStatus.classList.remove("safe");
-                alert("⚠ FIRE ALERT: Evacuate the Garage!");
-            } else {
-                fireStatus.textContent = "No Fire Detected";
-                fireStatus.classList.add("safe");
-                fireStatus.classList.remove("danger");
+    client.on("connect", () => {
+        console.log("Connected to MQTT Broker");
+        // Subscribe to the topic to get sensor updates
+        client.subscribe("smart_parking/garage", (err) => {
+            if (err) {
+                console.error("Failed to subscribe:", err);
             }
+        });
+    });
 
-            // Update car entry/exit counts
-            enteredCount = data.cars_entered;
-            exitedCount = data.cars_exited;
+    // Handle incoming MQTT messages
+    client.on("message", (topic, message) => {
+        const data = JSON.parse(message.toString());
 
-            carsEntered.textContent = enteredCount;
-            carsExited.textContent = exitedCount;
+        // Update parking spots
+        updateParkingSpot("spot1", data.parking_1 === "Empty" ? "Empty" : "Occupied");
+        updateParkingSpot("spot2", data.parking_2 === "Empty" ? "Empty" : "Occupied");
 
-        } catch (error) {
-            console.error("Error fetching sensor data:", error);
+        // Update fire status
+        if (data.fire_alert) {
+            fireStatus.textContent = "🔥 Fire Detected!";
+            fireStatus.classList.add("danger");
+            fireStatus.classList.remove("safe");
+            alert("⚠ FIRE ALERT: Evacuate the Garage!");
+        } else {
+            fireStatus.textContent = "No Fire Detected";
+            fireStatus.classList.add("safe");
+            fireStatus.classList.remove("danger");
         }
-    }
+
+        // Update car entry/exit counts (mocked for simplicity)
+        enteredCount = data.ir_sensor_1 === "Occupied" ? enteredCount + 1 : enteredCount;
+        exitedCount = data.ir_sensor_2 === "Occupied" ? exitedCount + 1 : exitedCount;
+
+        carsEntered.textContent = enteredCount;
+        carsExited.textContent = exitedCount;
+    });
 
     // Toggle dark and light modes
     modeToggle.addEventListener("click", () => {
@@ -75,7 +82,4 @@ document.addEventListener("DOMContentLoaded", () => {
             modeToggle.textContent = "🌙 Dark Mode";
         }
     });
-
-    // Call fetchSensorData every 3 seconds
-    setInterval(fetchSensorData, 3000);
 });
