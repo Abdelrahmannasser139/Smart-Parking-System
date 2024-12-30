@@ -1,204 +1,153 @@
-/* Body and Background */
+/* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Gradient */
-    background-image: url('circuit-pattern.png'); /* Replace with the circuit background image */
-    background-size: cover;
-    color: #1e293b;
+    background: linear-gradient(to bottom right, #2d89ef, #9acffa);
+    color: #333;
 }
 
-body.dark-mode {
-    background: #121212;
-    color: #e0e0e0;
-}
-
-/* Header */
-header {
-    background: #1565c0;
-    color: white;
-    text-align: center;
-    padding: 1.5em 0;
-    font-size: 2em;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    position: relative; /* To align children (notification and toggle button) */
-}
-
-/* Notification Styles */
-.notification-container {
-    display: flex;
-    align-items: center;
-    position: absolute; /* Positioned absolutely in the header */
-    left: 20px; /* Adjust the distance from the left */
-    top: 10px; /* Adjust the distance from the top */
-}
-
-/* Notification Bell */
-.notification-bell {
-    position: relative;
-    cursor: pointer;
-    margin-left: 20px;
-}
-
-.bell-icon {
-    font-size: 1.8em;
-    color: #1565c0;
-}
-
-/* Notification Badge */
-.notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    background: #d32f2f;
-    color: white;
-    font-size: 0.8em;
-    padding: 2px 6px;
-    border-radius: 50%;
-    font-weight: bold;
-    display: none; /* Hidden initially */
-}
-
-.notification-badge.show {
-    display: inline-block;
-}
-
-/* Mode Toggle Button */
-.mode-toggle {
-    position: fixed; /* Use fixed positioning to keep it on the screen */
-    top: 10px; /* Distance from the top of the page */
-    right: 20px; /* Distance from the right side of the page */
-    background: white;
-    color: #1565c0;
-    border: none;
-    padding: 0.5em 1em;
-    font-size: 1em;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: background 0.3s, color 0.3s;
-}
-
-.mode-toggle:hover {
-    background: #1976d2;
-    color: white;
-}
-
-/* Main Dashboard */
+/* Dashboard Container */
 .dashboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2em;
-    padding: 2em;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Dashboard Cards */
-.card {
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-    padding: 1.5em;
-    border-radius: 12px;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+/* Dashboard Title */
+h1 {
     text-align: center;
-    animation: fadeIn 0.5s ease-out;
-}
-
-.card.dark-mode {
-    background: #2c2c2c;
-    color: #e0e0e0;
-}
-
-/* Card Titles */
-.card h2 {
-    color: #1976d2;
-    margin-bottom: 1em;
-}
-
-.card.dark-mode h2 {
-    color: #90caf9;
-}
-
-/* Parking Spots */
-.parking-spot {
-    padding: 1em;
-    margin: 0.5em 0;
-    border: 2px solid #1976d2;
-    border-radius: 8px;
+    font-size: 2.5rem;
+    color: #2d89ef;
+    margin-bottom: 20px;
     font-weight: bold;
-    background: #bbdefb;
-    transition: transform 0.3s, background 0.3s;
+    transition: all 0.3s ease;
 }
 
-.parking-spot:hover {
-    transform: scale(1.05);
+/* Section Styles */
+.section {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: linear-gradient(to bottom right, #f9f9f9, #e8e8e8);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.parking-spot.occupied {
-    background: #d32f2f;
-    color: white;
-    border-color: #d32f2f;
+/* Section Hover Effects */
+.section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-.parking-spot.dark-mode {
-    background: #424242;
-    border-color: #616161;
-}
-
-.parking-spot.dark-mode.occupied {
-    background: #b71c1c;
-    border-color: #b71c1c;
-}
-
-/* Fire Alert */
-#fire-status {
-    font-size: 1.2em;
-    padding: 0.5em 1em;
-    border-radius: 8px;
+/* Section Headers */
+h2 {
+    font-size: 1.8rem;
+    color: #2d89ef;
+    margin-bottom: 10px;
+    border-bottom: 3px solid #2d89ef;
     display: inline-block;
-    margin-top: 1em;
+    padding-bottom: 5px;
 }
 
-#fire-status.safe {
-    background: #4caf50;
-    color: white;
+/* Status Text */
+.status-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
 }
 
-#fire-status.danger {
-    background: #d32f2f;
-    color: white;
-    animation: blink 1s infinite;
+/* Fire Section */
+.fire-section .status-text {
+    color: #ff4d4d;
+    font-weight: bold;
 }
 
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+/* Parking Status List */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Footer */
-footer {
-    background: #1565c0;
-    color: white;
-    text-align: center;
-    padding: 1em 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+li {
+    font-size: 1.1rem;
+    background: #f1f1f1;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-footer.dark-mode {
-    background: #1f1f1f;
-    color: #e0e0e0;
+/* Hover Effects */
+li:hover {
+    background: #2d89ef;
+    color: #fff;
+    transform: translateX(5px);
 }
 
-/* Fade-in Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
     }
-    to {
-        opacity: 1;
-        transform: scale(1);
+
+    .dashboard {
+        padding: 15px;
+        margin: 20px auto;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .status-text {
+        font-size: 1rem;
+    }
+
+    ul {
+        padding-left: 10px;
+    }
+
+    li {
+        font-size: 1rem;
+        padding: 8px;
+    }
+
+    .section {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .status-text {
+        font-size: 0.9rem;
+    }
+
+    li {
+        font-size: 0.9rem;
+        padding: 6px;
+    }
+
+    .section {
+        padding: 10px;
     }
 }
