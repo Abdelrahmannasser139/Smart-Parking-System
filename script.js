@@ -1,81 +1,69 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const parkingSpots = {
-        spot1: { status: "Empty" },
-        spot2: { status: "Empty" },
-    };
+// MQTT Broker Details
+const MQTT_BROKER = "ws://192.168.64.113:9001"; // WebSocket URL for the broker
+const CLIENT_ID = "web_dashboard_" + Math.random().toString(16).substr(2, 8);
 
-    const fireStatus = document.getElementById("fire-status");
-    const carsEntered = document.getElementById("cars-entered");
-    const carsExited = document.getElementById("cars-exited");
-    const modeToggle = document.getElementById("mode-toggle");
+// MQTT Topics
+const TOPICS = {
+    GATE_STATUS: "smart_parking/gate_status",
+    PARKING_STATUS: "smart_parking/parking_status",
+    DISTANCE: "smart_parking/distance",
+    FIRE_STATUS: "smart_parking/fire_status"
+};
 
-    let enteredCount = 0;
-    let exitedCount = 0;
+// MQTT Client Initialization
+const client = mqtt.connect(MQTT_BROKER, { clientId: CLIENT_ID });
 
-    // Update parking spot status
-    function updateParkingSpot(spotId, status) {
-        const spotElement = document.getElementById(spotId);
-        parkingSpots[spotId].status = status;
+// DOM Elements
+const gateStatusEl = document.getElementById("gate-status");
+const parkingStatusEl = document.getElementById("parking-status");
+const distanceEl = document.getElementById("distance");
+const fireStatusEl = document.getElementById("fire-status");
 
-        if (status === "Occupied") {
-            spotElement.textContent = `${spotId.replace("spot", "Spot ")}: Occupied`;
-            spotElement.classList.add("occupied");
-        } else {
-            spotElement.textContent = `${spotId.replace("spot", "Spot ")}: Empty`;
-            spotElement.classList.remove("occupied");
-        }
+// MQTT Event Handlers
+client.on("connect", () => {
+    console.log("Connected to MQTT Broker");
+    // Subscribe to relevant topics
+    for (let topic in TOPICS) {
+        client.subscribe(TOPICS[topic], (err) => {
+            if (err) console.error(`Failed to subscribe to ${TOPICS[topic]}`);
+        });
     }
+});
 
-    // Fetch data from Raspberry Pi sensors
-    async function fetchSensorData() {
-        try {
-            const response = await fetch('http://192.168.241.244:5000/sensors');
-            const data = await response.json();
+client.on("message", (topic, message) => {
+    const payload = message.toString();
+    console.log(`Message received on ${topic}: ${payload}`);
 
-            // Update parking spots
-            updateParkingSpot("spot1", data.parking_1 === "Empty" ? "Empty" : "Occupied");
-            updateParkingSpot("spot2", data.parking_2 === "Empty" ? "Empty" : "Occupied");
+    switch (topic) {
+        case TOPICS.GATE_STATUS:
+            gateStatusEl.textContent = payload;
+            break;
 
-            // Update fire status
-            if (data.fire_alert) {
-                fireStatus.textContent = "🔥 Fire Detected!";
-                fireStatus.classList.add("danger");
-                fireStatus.classList.remove("safe");
-                alert("⚠ FIRE ALERT: Evacuate the Garage!");
-            } else {
-                fireStatus.textContent = "No Fire Detected";
-                fireStatus.classList.add("safe");
-                fireStatus.classList.remove("danger");
-            }
+        case TOPICS.PARKING_STATUS:
+            const spaces = payload.split(","); // Assuming the payload is "Empty,Occupied,Empty"
+            parkingStatusEl.innerHTML = spaces
+                .map((status, index) => `<li>Space ${index + 1}: ${status}</li>`)
+                .join("");
+            break;
 
-            // Update car entry/exit counts
-            enteredCount = data.cars_entered;
-            exitedCount = data.cars_exited;
+        case TOPICS.DISTANCE:
+            distanceEl.textContent = `${payload} cm`;
+            break;
 
-            carsEntered.textContent = enteredCount;
-            carsExited.textContent = exitedCount;
+        case TOPICS.FIRE_STATUS:
+            fireStatusEl.textContent = payload;
+            fireStatusEl.style.color = payload.includes("Fire") ? "red" : "green";
+            break;
 
-        } catch (error) {
-            console.error("Error fetching sensor data:", error);
-        }
+        default:
+            console.warn(`Unhandled topic: ${topic}`);
     }
+});
 
-    // Toggle dark and light modes
-    modeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-        document.querySelector("header").classList.toggle("dark-mode");
-        document.querySelectorAll(".card").forEach(card => card.classList.toggle("dark-mode"));
-        document.querySelectorAll(".parking-spot").forEach(spot => spot.classList.toggle("dark-mode"));
-        document.querySelector("footer").classList.toggle("dark-mode");
+client.on("error", (err) => {
+    console.error("Connection error:", err);
+});
 
-        // Update button text
-        if (document.body.classList.contains("dark-mode")) {
-            modeToggle.textContent = "☀ Light Mode";
-        } else {
-            modeToggle.textContent = "🌙 Dark Mode";
-        }
-    });
-
-    // Call fetchSensorData every 3 seconds
-    setInterval(fetchSensorData, 3000);
+client.on("reconnect", () => {
+    console.log("Reconnecting...");
 });
