@@ -4,7 +4,7 @@
 
 The Smart Parking System is an IoT-based project designed to automate parking management. It utilizes sensors, a servo motor, and a Raspberry Pi to monitor and control parking space availability, gate operations, and fire detection. The system communicates real-time data via MQTT and features a web dashboard for visualization.
 
-# Features
+## Features
 
 Parking Space Monitoring:
 
@@ -30,7 +30,7 @@ Displays live data, including parking statuses, gate operations, and fire alerts
 
 Components
 
-# Hardware:
+## Hardware:
 
 Raspberry Pi 4
 
@@ -44,7 +44,7 @@ Buzzer
 
 Servo Motor
 
-# Software:
+## Software:
 
 Python (for system logic and sensor integration)
 
@@ -54,7 +54,7 @@ HTML/CSS/JavaScript (for the web dashboard)
 
 ## System Setup
 
-# Hardware Setup
+### Hardware Setup
 
 IR Sensors:
 
@@ -78,7 +78,7 @@ Servo Motor:
 
 Connect to GPIO pin 25.
 
-# Software Setup
+### Software Setup
 
 Install Dependencies:
 
@@ -94,7 +94,7 @@ Configure MQTT Broker:
 
 Use the Raspberry Pi's IP address as the broker address.
 
-# Web Dashboard
+### Web Dashboard
 
 Host the Dashboard:
 
@@ -116,7 +116,7 @@ smart_parking/fire_status          Fire detection alerts.
 
 ## Code Explanation
 
-# Python Script Highlights
+### Python Script Highlights
 
 Ultrasonic Distance Measurement:
 
@@ -152,7 +152,7 @@ Multithreading:
 
 Handles gate operations, parking status monitoring, and fire detection concurrently.
 
-# Demo
+## Demo
 
 Parking Space Status:
 
