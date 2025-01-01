@@ -1,6 +1,6 @@
 # Smart-Parking-System
 
-# Overview
+## Overview
 
 The Smart Parking System is an IoT-based project designed to automate parking management. It utilizes sensors, a servo motor, and a Raspberry Pi to monitor and control parking space availability, gate operations, and fire detection. The system communicates real-time data via MQTT and features a web dashboard for visualization.
 
