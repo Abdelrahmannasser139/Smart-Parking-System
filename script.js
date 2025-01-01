@@ -1,5 +1,5 @@
 // MQTT Broker Details
-const MQTT_BROKER = "ws://192.168.74.113:9001"; // WebSocket URL for the broker
+const MQTT_BROKER = "ws://192.168.74.113:9001";
 const CLIENT_ID = "web_dashboard_" + Math.random().toString(16).substr(2, 8);
 
 // MQTT Topics
@@ -7,7 +7,9 @@ const TOPICS = {
     GATE_STATUS: "smart_parking/gate_status",
     PARKING_STATUS: "smart_parking/parking_status",
     DISTANCE: "smart_parking/distance",
-    FIRE_STATUS: "smart_parking/fire_status"
+    FIRE_STATUS: "smart_parking/fire_status",
+    OPEN_GATE: "smart_parking/open_gate",
+    CLOSE_GATE: "smart_parking/close_gate"
 };
 
 // MQTT Client Initialization
@@ -18,16 +20,19 @@ const gateStatusEl = document.getElementById("gate-status");
 const parkingStatusEl = document.getElementById("parking-status");
 const distanceEl = document.getElementById("distance");
 const fireStatusEl = document.getElementById("fire-status");
+const gateToggleBtn = document.getElementById("gate-toggle-btn");
+
+// State Variables
+let isGateOpen = false;
 
 // MQTT Event Handlers
 client.on("connect", () => {
     console.log("Connected to MQTT Broker");
-    // Subscribe to relevant topics
-    for (let topic in TOPICS) {
-        client.subscribe(TOPICS[topic], (err) => {
-            if (err) console.error(`Failed to subscribe to ${TOPICS[topic]}`);
+    Object.values(TOPICS).forEach((topic) => {
+        client.subscribe(topic, (err) => {
+            if (err) console.error(`Failed to subscribe to ${topic}`);
         });
-    }
+    });
 });
 
 client.on("message", (topic, message) => {
@@ -37,10 +42,12 @@ client.on("message", (topic, message) => {
     switch (topic) {
         case TOPICS.GATE_STATUS:
             gateStatusEl.textContent = payload;
+            isGateOpen = payload.toLowerCase().includes("open");
+            gateToggleBtn.textContent = isGateOpen ? "Close Gate" : "Open Gate";
             break;
 
         case TOPICS.PARKING_STATUS:
-            const spaces = payload.split(","); // Assuming the payload is "Empty,Occupied,Empty"
+            const spaces = payload.split(",");
             parkingStatusEl.innerHTML = spaces
                 .map((status, index) => `<li>Space ${index + 1}: ${status}</li>`)
                 .join("");
@@ -60,10 +67,13 @@ client.on("message", (topic, message) => {
     }
 });
 
-client.on("error", (err) => {
-    console.error("Connection error:", err);
-});
+client.on("error", (err) => console.error("Connection error:", err));
 
-client.on("reconnect", () => {
-    console.log("Reconnecting...");
+// Button Event Listener
+gateToggleBtn.addEventListener("click", () => {
+    const action = isGateOpen ? "close" : "open";
+    const topic = isGateOpen ? TOPICS.CLOSE_GATE : TOPICS.OPEN_GATE;
+
+    client.publish(topic, action);
+    console.log(`${action} gate command sent.`);
 });
