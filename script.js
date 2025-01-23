@@ -1,5 +1,5 @@
 // MQTT Broker Details
-const MQTT_BROKER = "ws://192.168.74.113:9001";
+const MQTT_BROKER = "ws://192.168.139.202:9001";
 const CLIENT_ID = "web_dashboard_" + Math.random().toString(16).substr(2, 8);
 
 // MQTT Topics
